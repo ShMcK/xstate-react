@@ -1,5 +1,6 @@
 export default ({ transition, dispatch }) => ({
   triggerEntry() {
+    console.log("entry")
     setTimeout(() => {
       transition("NEXT")
     }, 2000)

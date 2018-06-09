@@ -1,10 +1,6 @@
-import reactXState from "../../lib"
 import { Machine } from "xstate"
 
-import actions from "./actions"
-import activities from "./activities"
-
-const trafficLightMachine = Machine({
+export default Machine({
   initial: "green",
   states: {
     green: {
@@ -31,11 +27,4 @@ const trafficLightMachine = Machine({
       }
     }
   }
-})
-
-export default reactXState({
-  name: "trafficLight",
-  machine: trafficLightMachine,
-  actions,
-  activities
 })
