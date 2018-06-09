@@ -14,12 +14,14 @@ export default function reactXState({ name, machine, actions, activities }) {
     constructor(props) {
       super(props)
       this.state = {
+        data: {},
         value: machine.initialStateValue
       }
 
       const params = {
         transition: this.transition,
-        dispatch: this.dispatch
+        dispatch: this.dispatch,
+        update: this.update,
       }
 
       this.actions = actions ? actions(params) : {}
@@ -37,6 +39,10 @@ export default function reactXState({ name, machine, actions, activities }) {
           this.dispatch(entryAction)
         }
       }
+    }
+
+    update = (data) => {
+      this.setState({ data })
     }
 
     // onEntry, onExit, actions
@@ -75,7 +81,8 @@ export default function reactXState({ name, machine, actions, activities }) {
       const value = {
         dispatch: this.dispatch,
         transition: this.transition,
-        state: this.state.value
+        state: this.state.value,
+        data: this.state.data,
       }
       return (
         <Context.Provider value={value}>{this.props.children}</Context.Provider>
