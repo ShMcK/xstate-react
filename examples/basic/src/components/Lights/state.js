@@ -2,6 +2,7 @@ import reactXState from "../../lib"
 import { Machine } from "xstate"
 
 import actions from "./actions"
+import activities from "./activities"
 
 const trafficLightMachine = Machine({
   initial: "green",
@@ -16,6 +17,8 @@ const trafficLightMachine = Machine({
     yellow: {
       onEntry: ["triggerEntry"],
       onExit: ["triggerExit"],
+      actions: ["triggerAction"],
+      activities: ["triggerActivity"],
       on: {
         NEXT: "red"
       }
@@ -33,5 +36,6 @@ const trafficLightMachine = Machine({
 export default reactXState({
   name: "trafficLight",
   machine: trafficLightMachine,
-  actions
+  actions,
+  activities
 })
