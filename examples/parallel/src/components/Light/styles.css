@@ -1,0 +1,41 @@
+.Page {
+  padding: 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.Container {
+  background-color: black;
+  padding: 1rem;
+  width: 7rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.Light {
+  margin: 1rem;
+  border-radius: 50%;
+  width: 5rem;
+  height: 5rem;
+  background-color: grey;
+}
+
+.ActiveGreen {
+  background-color: green;
+}
+
+.ActiveYellow {
+  background-color: yellow;
+}
+
+.ActiveRed {
+  background-color: red;
+}
+
+.Time {
+  margin: 3rem;
+}
