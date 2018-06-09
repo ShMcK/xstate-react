@@ -16,9 +16,16 @@ export default function reactXState({ name, machine, actions, activities }) {
       this.state = {
         value: machine.initialStateValue
       }
-      this.actions = actions ? actions(this.transition) : {}
-      this.activities = activities ? activities(this.transition) : {}
 
+      const params = {
+        transition: this.transition,
+        dispatch: this.dispatch
+      }
+
+      this.actions = actions ? actions(params) : {}
+      this.activities = activities ? activities(params) : {}
+
+      // hold active activities
       this.actives = {}
     }
 
@@ -43,8 +50,6 @@ export default function reactXState({ name, machine, actions, activities }) {
     // transition between states
     transition = (event, payload) => {
       const nextState = machine.transition(this.state.value, event)
-
-      console.log(nextState)
 
       // actions
       for (const action of nextState.actions) {

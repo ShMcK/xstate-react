@@ -1,4 +1,4 @@
-export default transition => ({
+export default ({ transition, dispatch }) => ({
   triggerActivity() {
     console.log("activity")
   }

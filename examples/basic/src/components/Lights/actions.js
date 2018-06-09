@@ -1,4 +1,4 @@
-export default transition => ({
+export default ({ transition, dispatch }) => ({
   triggerEntry() {
     setTimeout(() => {
       transition("NEXT")
