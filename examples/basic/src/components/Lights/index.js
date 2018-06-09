@@ -7,21 +7,24 @@ type Props = {
   state: "red" | "green" | "yellow"
 }
 
+const Light = ({ color, active }) => (
+  <div
+    className={`Light ${active &&
+      "Active" + color[0].toUpperCase() + color.slice(1)}`}
+  />
+)
+
 export default class Lights extends React.Component<Props> {
   render() {
     return (
       <div className="Page">
         <TrafficLight.Provider>
           <TrafficLight.Consumer>
-            {({ state }) => (
+            {({ state, transition }) => (
               <div className="Container">
-                <div
-                  className={`Light ${state === "green" && "ActiveGreen"}`}
-                />
-                <div
-                  className={`Light ${state === "yellow" && "ActiveYellow"}`}
-                />
-                <div className={`Light ${state === "red" && "ActiveRed"}`} />
+                <Light color="green" active={state === "green"} />
+                <Light color="yellow" active={state === "yellow"} />
+                <Light color="red" active={state === "red"} />
               </div>
             )}
           </TrafficLight.Consumer>

@@ -11,23 +11,39 @@ export default function reactXState({ name, machine, actions }) {
   class Provider extends React.Component {
     static displayName = `${capitalize(name)}Provider`
 
-    state = {
-      value: machine.initialStateValue
+    constructor(props) {
+      super(props)
+      this.state = {
+        value: machine.initialStateValue
+      }
+      this.actions = actions ? actions(this.transition) : {}
     }
 
-    actions = actions ? actions(this.transition) : {}
+    componentDidMount() {
+      // handle onEntry on start up
+      const initialConfig = machine.initialStateNodes[0].config
+      if (initialConfig.onEntry) {
+        for (const entryAction of initialConfig.onEntry) {
+          this.dispatch(entryAction)
+        }
+      }
+    }
 
-    transition = event => {
-      const nextState = machine.transition(this.state.value, event).value
+    dispatch = (action, payload) => {
+      const triggerableAction = this.actions[action]
+      if (triggerableAction) {
+        triggerableAction(payload)
+      }
+    }
 
-      // for (const actionKey of nextState.actions) {
-      //   const action = this.actions[actionKey]
-      //   if (action) {
-      //     action(event)
-      //   }
-      // }
+    transition = (event, payload) => {
+      const nextState = machine.transition(this.state.value, event)
 
-      this.setState({ value: nextState })
+      for (const action of nextState.actions) {
+        this.dispatch(action, payload)
+      }
+
+      this.setState({ value: nextState.value })
     }
 
     render() {

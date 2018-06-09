@@ -7,18 +7,21 @@ const trafficLightMachine = Machine({
   initial: "green",
   states: {
     green: {
+      onEntry: ["triggerNext"],
       on: {
-        TURN_YELLOW: "yellow"
+        NEXT: "yellow"
       }
     },
     yellow: {
+      onEntry: ["triggerNext"],
       on: {
-        TURN_RED: "red"
+        NEXT: "red"
       }
     },
     red: {
+      onEntry: ["triggerNext"],
       on: {
-        TURN_GREEN: "green"
+        NEXT: "green"
       }
     }
   }
