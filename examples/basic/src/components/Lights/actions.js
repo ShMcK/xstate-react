@@ -1,7 +1,10 @@
 export default transition => ({
-  triggerNext() {
+  triggerEntry() {
     setTimeout(() => {
       transition("NEXT")
-    }, 2000)
+    }, 5000)
+  },
+  triggerExit() {
+    console.log("exit")
   }
 })
