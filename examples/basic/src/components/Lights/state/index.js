@@ -1,4 +1,4 @@
-import reactXState from "../../../lib"
+import reactXState from "xstate-react"
 
 import actions from "./actions"
 import activities from "./activities"
