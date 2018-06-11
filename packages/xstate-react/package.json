@@ -12,6 +12,7 @@
   "main": "dist/cjs/xstate-react.js",
   "module": "dist/esm/xstate-react.js",
   "browser": "dist/umd/xstate-react.js",
+  "types": "src/typings.d.ts",
   "dependencies": {
     "react": "^16.4.0",
     "xstate": "^3.3.2"

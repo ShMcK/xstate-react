@@ -9,7 +9,11 @@ A checklist of supported and planned features:
 - [x] Provider/Consumer from Context API
 - [x] onEntry, onExit
 - [x] actions
-- [ ] data
-- [ ] activities
 - [x] nested state charts
 - [x] parallel state charts
+- [ ] data
+- [ ] activities
+
+### Package
+
+See [xState-react](./packages/xstate-react)

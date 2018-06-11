@@ -1,13 +1,7 @@
 import * as React from "react"
+import { Config } from "./typings"
 
 const capitalize = string => string.charAt(0).toUpperCase() + string.slice(1)
-
-type Config = {
-  name: string
-  machine: any
-  actions: (params: any) => any
-  activities: (params: any) => any
-}
 
 // lib, returns Context.Provider, Context.
 export default function reactXState<D>({
