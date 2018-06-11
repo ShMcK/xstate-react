@@ -1,4 +1,4 @@
-export default ({ transition, dispatch, update }) => ({
+export default ({ transition }) => ({
   triggerEntry() {
     console.log("entry")
     setTimeout(() => {

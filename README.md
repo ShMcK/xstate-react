@@ -11,7 +11,7 @@ A checklist of supported and planned features:
 - [x] actions
 - [x] nested state charts
 - [x] parallel state charts
-- [ ] data
+- [x] data
 - [ ] activities
 
 ### Package
