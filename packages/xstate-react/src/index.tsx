@@ -2,27 +2,28 @@ import * as React from "react"
 
 const capitalize = string => string.charAt(0).toUpperCase() + string.slice(1)
 
-type Params = {
+type Config = {
   name: string
   machine: any
   actions: (params: any) => any
   activities: (params: any) => any
 }
 
-type Props = {}
-type State = {
-  data: any
-  value: any
-}
-
 // lib, returns Context.Provider, Context.
-export default function reactXState({
+export default function reactXState<D>({
   name,
   machine,
   actions,
   activities
-}: Params) {
+}: Config) {
   name = name || "defaultName"
+
+  type Props = {}
+
+  type State = {
+    data: D
+    value: any
+  }
 
   const Context = React.createContext(name)
 
@@ -36,7 +37,7 @@ export default function reactXState({
     constructor(props) {
       super(props)
       this.state = {
-        data: {},
+        data: null,
         value: machine.initialStateValue
       }
 
@@ -56,16 +57,26 @@ export default function reactXState({
     componentDidMount() {
       // handle onEntry on start up
       for (const stateNode of machine.initialStateNodes) {
-        if (stateNode.config.onEntry) {
-          for (const entryAction of stateNode.config.onEntry) {
-            this.dispatch(entryAction)
-          }
-        }
+        this.handleAction(stateNode.config.onEntry)
       }
     }
 
     update = data => {
       this.setState({ data })
+    }
+
+    handleAction = (actionList: string | string[]) => {
+      if (actionList) {
+        if (Array.isArray(actionList)) {
+          // actionList: array
+          for (const action of actionList) {
+            this.dispatch(action)
+          }
+        } else {
+          // actionList: string
+          this.dispatch(actionList)
+        }
+      }
     }
 
     // onEntry, onExit, actions
@@ -81,9 +92,7 @@ export default function reactXState({
       const nextState = machine.transition(this.state.value, event)
 
       // actions
-      for (const action of nextState.actions) {
-        this.dispatch(action)
-      }
+      this.handleAction(nextState.actions)
 
       // activities
       for (const activity of Object.keys(nextState.activities)) {
