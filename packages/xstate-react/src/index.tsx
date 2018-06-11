@@ -8,7 +8,8 @@ export default function reactXState<D>({
   name,
   machine,
   actions,
-  activities
+  activities,
+  initialData
 }: Config) {
   name = name || "defaultName"
 
@@ -22,6 +23,7 @@ export default function reactXState<D>({
   const Context = React.createContext(name)
 
   class Provider extends React.Component<Props, State> {
+    // give an improved name for the React Devtools
     static displayName = `${capitalize(name)}Provider`
 
     actions: any
@@ -31,14 +33,15 @@ export default function reactXState<D>({
     constructor(props) {
       super(props)
       this.state = {
-        data: null,
+        data: initialData,
         value: machine.initialStateValue
       }
 
       const params = {
         transition: this.transition,
         dispatch: this.dispatch,
-        update: this.update
+        update: this.update,
+        getData: this.getData
       }
 
       this.actions = actions ? actions(params) : {}
@@ -57,6 +60,10 @@ export default function reactXState<D>({
 
     update = data => {
       this.setState({ data })
+    }
+
+    getData = () => {
+      return this.state.data
     }
 
     handleAction = (actionList: string | string[]) => {
@@ -82,7 +89,7 @@ export default function reactXState<D>({
     }
 
     // transition between states
-    transition = (event, payload) => {
+    transition = event => {
       const nextState = machine.transition(this.state.value, event)
 
       // actions
