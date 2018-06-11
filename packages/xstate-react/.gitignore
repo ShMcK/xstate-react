@@ -2,13 +2,13 @@
 
 # dependencies
 /node_modules
-package-lock.json
-yarn.lock
 
 # testing
 /coverage
 
 # production
+/lib
+/dist
 /build
 
 # misc

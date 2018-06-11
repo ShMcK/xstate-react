@@ -1,15 +1,37 @@
-import React from "react"
+import * as React from "react"
 
 const capitalize = string => string.charAt(0).toUpperCase() + string.slice(1)
 
+type Params = {
+  name: string
+  machine: any
+  actions: (params: any) => any
+  activities: (params: any) => any
+}
+
+type Props = {}
+type State = {
+  data: any
+  value: any
+}
+
 // lib, returns Context.Provider, Context.
-export default function reactXState({ name, machine, actions, activities }) {
+export default function reactXState({
+  name,
+  machine,
+  actions,
+  activities
+}: Params) {
   name = name || "defaultName"
 
   const Context = React.createContext(name)
 
-  class Provider extends React.Component {
+  class Provider extends React.Component<Props, State> {
     static displayName = `${capitalize(name)}Provider`
+
+    actions: any
+    activities: any
+    actives: any
 
     constructor(props) {
       super(props)
@@ -47,10 +69,10 @@ export default function reactXState({ name, machine, actions, activities }) {
     }
 
     // onEntry, onExit, actions
-    dispatch = (action, payload) => {
+    dispatch = action => {
       const triggerableAction = this.actions[action]
       if (triggerableAction) {
-        triggerableAction(payload)
+        triggerableAction()
       }
     }
 
@@ -60,7 +82,7 @@ export default function reactXState({ name, machine, actions, activities }) {
 
       // actions
       for (const action of nextState.actions) {
-        this.dispatch(action, payload)
+        this.dispatch(action)
       }
 
       // activities
@@ -79,7 +101,7 @@ export default function reactXState({ name, machine, actions, activities }) {
     }
 
     render() {
-      const value = {
+      const value: any = {
         dispatch: this.dispatch,
         transition: this.transition,
         state: this.state.value,

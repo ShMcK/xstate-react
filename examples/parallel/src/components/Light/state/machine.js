@@ -35,6 +35,12 @@ export default Machine({
             TICK: "evening"
           }
         },
+        afternoon: {
+          onEntry: ["clockTimer"],
+          on: {
+            TICK: "night"
+          }
+        },
         evening: {
           onEntry: ["clockTimer"],
           on: {
