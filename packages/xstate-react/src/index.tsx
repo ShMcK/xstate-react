@@ -2,7 +2,13 @@ import * as React from "react"
 import { capitalize, objDiff } from "./utils"
 
 // lib, returns Context.Provider, Context.
-export default function reactXState<D>({ name, machine, actions, activities }) {
+export default function reactXState<D>({
+  name,
+  machine,
+  actions,
+  store,
+  activities
+}) {
   name = name || "defaultName"
 
   type Props = {
@@ -46,7 +52,8 @@ export default function reactXState<D>({ name, machine, actions, activities }) {
 
       const params = {
         transition: this.transition,
-        dispatch: this.dispatch
+        send: this.send,
+        store
       }
 
       this.actions = actions ? actions(params) : {}
@@ -73,11 +80,11 @@ export default function reactXState<D>({ name, machine, actions, activities }) {
         if (Array.isArray(actionList)) {
           // actionList: array
           for (const action of actionList) {
-            this.dispatch(action)
+            this.send(action)
           }
         } else {
           // actionList: string
-          this.dispatch(actionList)
+          this.send(actionList)
         }
       }
     }
@@ -95,7 +102,7 @@ export default function reactXState<D>({ name, machine, actions, activities }) {
     }
 
     // onEntry, onExit, actions
-    dispatch = action => {
+    send = action => {
       const triggerableAction = this.actions[action]
       if (triggerableAction) {
         triggerableAction()
@@ -130,7 +137,7 @@ export default function reactXState<D>({ name, machine, actions, activities }) {
 
     render() {
       const value: any = {
-        dispatch: this.dispatch,
+        send: this.send,
         transition: this.transition,
         state: machine.parallel ? this.state : this.state.value
       }
