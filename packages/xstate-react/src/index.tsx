@@ -1,23 +1,16 @@
 import * as React from "react"
-import { Config } from "./typings"
-
-const capitalize = string => string.charAt(0).toUpperCase() + string.slice(1)
+import { capitalize, objDiff } from "./utils"
 
 // lib, returns Context.Provider, Context.
-export default function reactXState<D>({
-  name,
-  machine,
-  actions,
-  activities,
-  initialData
-}: Config) {
+export default function reactXState<D>({ name, machine, actions, activities }) {
   name = name || "defaultName"
 
-  type Props = {}
+  type Props = {
+    // state?: any
+  }
 
   type State = {
-    data: D
-    value: any
+    value: string | any
   }
 
   const Context = React.createContext(name)
@@ -29,19 +22,31 @@ export default function reactXState<D>({
     actions: any
     activities: any
     actives: any
+    transition: (event: string) => void
 
     constructor(props) {
       super(props)
-      this.state = {
-        data: initialData,
-        value: machine.initialStateValue
+
+      if (machine.parallel) {
+        // handle parallel machine
+        this.state = {
+          // use props.state for setting initial <Provider state={state} /> in tests
+          ...machine.initialStateValue,
+          ...(props.state || {})
+        }
+        this.transition = this.parallelTransition
+      } else {
+        // handle non parallel machine
+        this.state = {
+          // @ts-ignore
+          value: props.state || machine.initialStateValue
+        }
+        this.transition = this.basicTransition
       }
 
       const params = {
         transition: this.transition,
-        dispatch: this.dispatch,
-        update: this.update,
-        getData: this.getData
+        dispatch: this.dispatch
       }
 
       this.actions = actions ? actions(params) : {}
@@ -54,19 +59,16 @@ export default function reactXState<D>({
     componentDidMount() {
       // handle onEntry on start up
       for (const stateNode of machine.initialStateNodes) {
-        this.handleAction(stateNode.config.onEntry)
+        // TODO: clean up this check if onEntry is an array or string
+        const entryActions =
+          typeof stateNode.config.onEntry === "string"
+            ? [stateNode.config.onEntry]
+            : stateNode.config.onEntry
+        this.handleActions(entryActions)
       }
     }
 
-    update = data => {
-      this.setState({ data })
-    }
-
-    getData = () => {
-      return this.state.data
-    }
-
-    handleAction = (actionList: string | string[]) => {
+    handleActions = (actionList: string | string[]) => {
       if (actionList) {
         if (Array.isArray(actionList)) {
           // actionList: array
@@ -80,6 +82,18 @@ export default function reactXState<D>({
       }
     }
 
+    handleActivities = activityList => {
+      // for (const activity of Object.keys(activityList)) {
+      // 	const isActive = activityList[activity]
+      // 	if (isActive) {
+      // 		// cancellable activities
+      // 		// Promise.race(this.activities[activity](), wait(10 * 1000))
+      // 	} else if (this.actives[activity]) {
+      // 		// end activity
+      // 	}
+      // }
+    }
+
     // onEntry, onExit, actions
     dispatch = action => {
       const triggerableAction = this.actions[action]
@@ -88,23 +102,27 @@ export default function reactXState<D>({
       }
     }
 
-    // transition between states
-    transition = event => {
-      const nextState = machine.transition(this.state.value, event)
-
+    parallelTransition = event => {
+      const nextState = machine.transition(this.state, event)
       // actions
-      this.handleAction(nextState.actions)
+      this.handleActions(nextState.actions)
 
       // activities
-      for (const activity of Object.keys(nextState.activities)) {
-        const isActive = nextState.activities[activity]
-        if (isActive) {
-          // cancellable activities
-          // Promise.race(this.activities[activity](), wait(10 * 1000))
-        } else if (this.actives[activity]) {
-          // end activity
-        }
-      }
+      // this.handleActivities(nextState.activities)
+
+      // set only the diff, necessary as setState is async and batches
+      const next = objDiff(this.state, nextState.value)
+      this.setState(next)
+    }
+
+    // transition between states
+    basicTransition = event => {
+      const nextState = machine.transition(this.state.value, event)
+      // actions
+      this.handleActions(nextState.actions)
+
+      // activities
+      // this.handleActivities(nextState.activities)
 
       // set next state
       this.setState({ value: nextState.value })
@@ -114,8 +132,7 @@ export default function reactXState<D>({
       const value: any = {
         dispatch: this.dispatch,
         transition: this.transition,
-        state: this.state.value,
-        data: this.state.data
+        state: machine.parallel ? this.state : this.state.value
       }
       return (
         <Context.Provider value={value}>{this.props.children}</Context.Provider>
