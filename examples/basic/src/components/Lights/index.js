@@ -22,6 +22,7 @@ export default class Lights extends React.Component<Props> {
           <TrafficLight.Consumer>
             {({ state, transition }) => (
               <div className="Container">
+                <div style={{ color: "white" }}>{JSON.stringify(state)}</div>
                 <Light color="green" active={state === "green"} />
                 <Light color="yellow" active={state === "yellow"} />
                 <Light color="red" active={state === "red"} />
