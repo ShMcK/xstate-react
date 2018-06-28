@@ -1,7 +1,6 @@
 export type Config = {
   name: string
-  machine: any
-  initialData: any
+  config: any
   actions: (params: any) => any
   activities: (params: any) => any
 }
